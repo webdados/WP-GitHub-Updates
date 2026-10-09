@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<ruleset name="wp-github-updates">
+	<file>src</file>
+	<arg name="extensions" value="php"/>
+	<arg name="cache" value=".phpcs.cache"/>
+	<arg value="sp"/>
+	<arg name="colors"/>
+
+	<config name="minimum_supported_wp_version" value="6.5"/>
+	<config name="testVersion" value="7.4-"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<rule ref="WordPress">
+		<!-- PSR-4 file and class names, so Composer can autoload them. -->
+		<exclude name="WordPress.Files.FileName"/>
+	</rule>
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="wp-github-updates"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

@@ -1,0 +1,26 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: wp-github-updates\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pt_PT\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/Updater.php
+msgid "No updates:"
+msgstr "Sem atualizações:"
+
+#: src/Updater.php
+msgid "%s is not getting updates because its GitHub access token is not set."
+msgid_plural "%s are not getting updates because their GitHub access token is not set."
+msgstr[0] "%s não está a receber atualizações porque o token de acesso ao GitHub não está definido."
+msgstr[1] "%s não estão a receber atualizações porque o token de acesso ao GitHub não está definido."
+
+#: src/Updater.php
+msgid "Set it in %s."
+msgstr "Defina-o em %s."
+
+#: src/Updater.php
+msgid "the settings"
+msgstr "as definições"

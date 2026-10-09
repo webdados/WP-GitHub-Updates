@@ -1,0 +1,35 @@
+{
+	"name": "webdados/wp-github-updates",
+	"description": "Updates for private or public WordPress plugins and themes from GitHub releases, with the access token kept out of the code.",
+	"type": "library",
+	"license": "GPL-2.0-or-later",
+	"keywords": ["wordpress", "plugin", "theme", "updates", "github", "plugin-update-checker"],
+	"homepage": "https://github.com/webdados/WP-GitHub-Updates",
+	"authors": [
+		{
+			"name": "Webdados",
+			"homepage": "https://www.webdados.pt"
+		}
+	],
+	"require": {
+		"php": ">=7.4",
+		"yahnis-elsts/plugin-update-checker": "^5.0"
+	},
+	"require-dev": {
+		"wp-coding-standards/wpcs": "^3.1",
+		"phpcompatibility/phpcompatibility-wp": "^2.1"
+	},
+	"autoload": {
+		"psr-4": {
+			"Webdados\\GitHubUpdates\\": "src/"
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"scripts": {
+		"lint": "phpcs"
+	}
+}
