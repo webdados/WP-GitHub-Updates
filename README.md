@@ -78,7 +78,7 @@ How the environment check behaves:
 
 Version numbers: the beta's plugin or theme header must carry the same suffix as its tag (`1.2.0-beta.1`). WordPress compares that as lower than `1.2.0`, so the stable release replaces the beta on the next update check.
 
-Which release is offered: with pre-releases on, the 20 most recent releases are read and the newest one created wins, not the highest version. That only matters if tags are pushed out of version order. Drafts are always skipped.
+Which release is offered: with pre-releases on, the first 20 releases GitHub lists are read and the highest version among them wins, compared the way WordPress compares versions. Drafts are always skipped. Reading them takes two GitHub API requests per update check instead of one.
 
 ## Without a token
 

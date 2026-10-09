@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 - 2026-10-09
+
+- [FIX] With `prereleases` on, the highest version is offered, not the first release GitHub lists, which is not in version order (a beta could be skipped in favour of an older stable release).
+
 ## 1.1.0 - 2026-10-09
 
 - [NEW] `prereleases` setting (a bool, or a callable returning one) to also offer GitHub pre-releases, e.g. `'production' !== wp_get_environment_type()` for betas on local and staging sites only. Off by default.

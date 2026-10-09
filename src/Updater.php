@@ -170,16 +170,84 @@ class Updater {
 			$vcs_api = $this->update_checker->getVcsApi();
 			// The release filter is not in every VCS API PUC supports (Bitbucket has no releases).
 			if ( method_exists( $vcs_api, 'setReleaseFilter' ) ) {
-				// RELEASE_FILTER_ALL read through the API's own class, so no v5pN namespace is named here.
-				$vcs_api->setReleaseFilter(
-					'__return_true',
-					constant( get_class( $vcs_api ) . '::RELEASE_FILTER_ALL' )
+				$vcs_api->setReleaseFilter( '__return_true', $this->release_filter_all( $vcs_api ) );
+				add_filter(
+					$this->update_checker->getUniqueName( 'vcs_update_detection_strategies' ),
+					array( $this, 'use_highest_release' )
 				);
 			}
 		}
 		if ( '' !== $token ) {
 			$this->update_checker->setAuthentication( $token );
 		}
+	}
+
+	/**
+	 * Replace PUC's "latest release" strategy with one that picks the highest version.
+	 *
+	 * With pre-releases included, PUC reads the release list and takes the first one that passes
+	 * its filters, but GitHub does not list releases in version or creation order.
+	 *
+	 * @param array $strategies Update detection strategies, keyed by name.
+	 * @return array
+	 */
+	public function use_highest_release( $strategies ) {
+		if ( isset( $strategies['latest_release'] ) ) {
+			$strategies['latest_release'] = array( $this, 'get_highest_release' );
+		}
+		return $strategies;
+	}
+
+	/**
+	 * The release with the highest version, drafts excluded, pre-releases included.
+	 *
+	 * Two passes through PUC's own getLatestRelease(), so authentication and release assets keep
+	 * working as usual: the first collects every version that passes PUC's filters (by rejecting
+	 * them all), the second accepts only the highest one.
+	 *
+	 * @return object|null PUC Reference, or null when there is no release.
+	 */
+	public function get_highest_release() {
+		$vcs_api  = $this->update_checker->getVcsApi();
+		$all      = $this->release_filter_all( $vcs_api );
+		$versions = array();
+		$vcs_api->setReleaseFilter(
+			function ( $version ) use ( &$versions ) {
+				$versions[] = $version;
+				return false;
+			},
+			$all
+		);
+		$vcs_api->getLatestRelease();
+		if ( empty( $versions ) ) {
+			$vcs_api->setReleaseFilter( '__return_true', $all );
+			return null;
+		}
+		$highest = array_shift( $versions );
+		foreach ( $versions as $version ) {
+			if ( version_compare( $version, $highest, '>' ) ) {
+				$highest = $version;
+			}
+		}
+		$vcs_api->setReleaseFilter(
+			function ( $version ) use ( $highest ) {
+				return $version === $highest;
+			},
+			$all
+		);
+		$release = $vcs_api->getLatestRelease();
+		$vcs_api->setReleaseFilter( '__return_true', $all );
+		return $release;
+	}
+
+	/**
+	 * PUC's RELEASE_FILTER_ALL, read through the API's own class, so no v5pN namespace is named here.
+	 *
+	 * @param object $vcs_api PUC VCS API.
+	 * @return int
+	 */
+	private function release_filter_all( $vcs_api ) {
+		return constant( get_class( $vcs_api ) . '::RELEASE_FILTER_ALL' );
 	}
 
 	/**
