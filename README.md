@@ -8,7 +8,11 @@ Updates for WordPress plugins and themes from GitHub releases, private or public
 composer require webdados/wp-github-updates
 ```
 
-Ship `vendor/` in the release zip (run `composer install --no-dev --optimize-autoloader` in the release workflow, and keep `vendor/` out of `.distignore`), then load it from the main plugin file or the theme's `functions.php`:
+`vendor/` must ship in the release zip, so keep it out of `.distignore`. Build it with `composer install --no-dev --optimize-autoloader` and commit it, so the zip holds exactly the `vendor/` you tested (or run that command in the release workflow instead, with `vendor/` gitignored). To move to a newer release of this package, run `composer update webdados/wp-github-updates --no-dev --optimize-autoloader` and commit `vendor/` and `composer.lock` together.
+
+With a committed `vendor/`, leave Composer out of Dependabot: its pull requests update `composer.lock` but not `vendor/`, so after merging one the zip would still ship the old code. If you keep it, rebuild and commit `vendor/` after every Dependabot merge.
+
+Then load it from the main plugin file or the theme's `functions.php`:
 
 ```php
 require __DIR__ . '/vendor/autoload.php';
