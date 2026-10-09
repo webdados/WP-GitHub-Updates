@@ -75,6 +75,7 @@ class Updater {
 	 *     @type string          $settings_name  Name of that screen, for the link.
 	 *     @type bool|string     $release_assets Download the release's attached zip (true), the asset matching this regex, or the source zip (false). Default true.
 	 *     @type string          $capability     Who sees the missing token notice. Default "manage_options".
+	 *     @type bool|callable   $prereleases    Also offer GitHub pre-releases (true), or a callable returning whether to. Default false.
 	 * }
 	 */
 	public function __construct( $config ) {
@@ -91,6 +92,7 @@ class Updater {
 				'settings_name'  => '',
 				'release_assets' => true,
 				'capability'     => 'manage_options',
+				'prereleases'    => false,
 			)
 		);
 		if ( '' === $this->config['name'] ) {
@@ -164,9 +166,32 @@ class Updater {
 				$this->update_checker->getVcsApi()->enableReleaseAssets();
 			}
 		}
+		if ( $this->wants_prereleases() ) {
+			$vcs_api = $this->update_checker->getVcsApi();
+			// The release filter is not in every VCS API PUC supports (Bitbucket has no releases).
+			if ( method_exists( $vcs_api, 'setReleaseFilter' ) ) {
+				// RELEASE_FILTER_ALL read through the API's own class, so no v5pN namespace is named here.
+				$vcs_api->setReleaseFilter(
+					'__return_true',
+					constant( get_class( $vcs_api ) . '::RELEASE_FILTER_ALL' )
+				);
+			}
+		}
 		if ( '' !== $token ) {
 			$this->update_checker->setAuthentication( $token );
 		}
+	}
+
+	/**
+	 * Whether pre-releases are offered, from the prereleases setting or the callable in it.
+	 *
+	 * @return bool
+	 */
+	private function wants_prereleases() {
+		if ( is_callable( $this->config['prereleases'] ) ) {
+			return (bool) call_user_func( $this->config['prereleases'] );
+		}
+		return true === $this->config['prereleases'];
 	}
 
 	/**

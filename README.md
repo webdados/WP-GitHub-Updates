@@ -56,6 +56,26 @@ Leave out both `token_option` and `token`. No token is sent and no notice is sho
 
 Note that GitHub allows 60 unauthenticated API requests per hour per IP address. Plugin Update Checker checks every 12 hours per site, which is fine for most hosting, but many sites on one shared IP can hit the limit.
 
+## Pre-releases
+
+GitHub pre-releases are skipped by default. `prereleases` offers them too, as a bool or a callable returning one, read when the updater is created. To give betas to local and staging sites only:
+
+```php
+'prereleases' => 'production' !== wp_get_environment_type(),
+```
+
+The package never decides this by itself, so a site only installs betas when its plugin or theme asks for them.
+
+How the environment check behaves:
+
+- On a local site `wp_get_environment_type()` returns `local`, so it sees betas.
+- When `WP_ENVIRONMENT_TYPE` is not set, WordPress returns `production`. Production is safe by default, as long as nobody sets it to something else there.
+- A staging copy only sees betas if its `wp-config.php` sets `WP_ENVIRONMENT_TYPE` to `staging`. A copy made with Softaculous does not do that by itself.
+
+Version numbers: the beta's plugin or theme header must carry the same suffix as its tag (`1.2.0-beta.1`). WordPress compares that as lower than `1.2.0`, so the stable release replaces the beta on the next update check.
+
+Which release is offered: with pre-releases on, the 20 most recent releases are read and the newest one created wins, not the highest version. That only matters if tags are pushed out of version order. Drafts are always skipped.
+
 ## Without a token
 
 When a token is expected but empty, no update checker is built (a private repository answers 404 to anonymous requests) and an error is shown on every wp-admin screen to users with `capability` (default `manage_options`), linking to `settings_url` when given:
@@ -78,6 +98,7 @@ Projects sharing one `token_option` share one notice, even when they ship differ
 | `settings_name` | "the settings" | Text of that link |
 | `release_assets` | `true` | `true` downloads the zip attached to the release, a regex picks one asset, `false` uses GitHub's source zip |
 | `capability` | `manage_options` | Who sees the notice |
+| `prereleases` | `false` | `true`, or a callable returning `true`, also offers GitHub pre-releases |
 
 `get_update_checker()` returns the Plugin Update Checker instance for further customisation, or `null` when it was not built.
 
