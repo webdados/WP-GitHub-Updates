@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 - 2026-10-27
+
+- [TWEAK] Renamed to Webdados WP GitHub Updates. The Composer package name, namespace and text domain are unchanged, so existing plugins need no changes.
+
 ## 1.1.1 - 2026-10-09
 
 - [FIX] With `prereleases` on, the highest version is offered, not the first release GitHub lists, which is not in version order (a beta could be skipped in favour of an older stable release).
