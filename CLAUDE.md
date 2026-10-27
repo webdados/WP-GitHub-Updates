@@ -1,4 +1,4 @@
-# WP GitHub Updates: AI context
+# Webdados WP GitHub Updates: AI context
 
 Composer library (`webdados/wp-github-updates`, namespace `Webdados\GitHubUpdates`) that builds Plugin Update Checker (PUC, a Composer dependency, `^5.0`) for a WordPress plugin or theme, reading the GitHub token at runtime instead of from the code. Public repo, GPL-2.0-or-later. See README.md for usage.
 

@@ -1,4 +1,4 @@
-# WP GitHub Updates
+# Webdados WP GitHub Updates
 
 Updates for WordPress plugins and themes from GitHub releases, private or public, with the access token kept out of the code. Built on [Plugin Update Checker](https://github.com/YahnisElsts/plugin-update-checker), which Composer installs with it.
 
